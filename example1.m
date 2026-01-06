@@ -67,7 +67,7 @@ for segcorr = 2:num_segments
   % -- Remove delta phase
   for seg=segcorr:num_segments
     corr_images(:,:,:,seg)=corr_images(:,:,:,seg).* ...
-		exp(-i*angle(phcorr(:,:,:,segcorr)));
+		exp(-i*phcorr(:,:,:,segcorr));
   end;
 
 end;
