@@ -5,7 +5,7 @@ such that (1) t(k) and t(-k) are equal and (2) the surrounding samples have
 similar time, then the phase over time can be estimated using time segmentation
 of the data.
 
-Here is an overview of steps to use this code.
+Here is an overview of steps to use this code. 
 
 ## A) Load Sampling Trajectory Time (Gridded)
 This is an example 3D cones sampling trajectory, with kx,ky,kz locations, normalized
