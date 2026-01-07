@@ -18,14 +18,21 @@ not necessary here.
 Dataset is image-domain, and is complex-valued (simple coil combination).  
 It is easily Fourier transformed to k-space.
 
-## C) Generate Time-Segment windows W[k(t)]
-The windows here are Hamming windows over time, such that adjacent time windows
+## C) Generate Time-Segmented Images
+k-space windows here are Hamming windows over time, such that adjacent time windows
 add to 1.0, so that after full correction in the image domain, the segments can
 be simply added to combine.
 
 ## D) Show the Images/Phases for Windowed Time Segments
+For each segment, the phase difference from the last segment is calculated.  This
+is corrected for sign changes (assuming slow phase accrual), and the segment is low-pass
+filtered to extract the phase accrual to that segment, which is then removed from the
+segment an all remainging segments.  Note that for the first (DC) segment, the phase
+accrual is simply the phase of the segment (no sign correction, already low-pass filtered).
 
-## E) Demodulate the Low-Resolution Image Phase
+## E) The Corrected Image is Formed
+This is simply the sum of the phase-corrected componenents.
+
 
 
 
