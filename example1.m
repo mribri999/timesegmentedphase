@@ -26,19 +26,21 @@ disp(size(source_image));
 
 
 % ==== C) Generate Time-Segmented Components 
-% This Requires memory... (makes a copy of the 3D image for
+% This Requires memory... (makes several copies of the 3D image for
 % each time segment), but is explicit for understanding the approach.
 num_segments=8;							
 segment_images = zeros([size(source_image) num_segments]);	% Allocate
+kspace_windows = segment_images;				% Allocate
 
 for seg=1:num_segments
-  segment_images(:,:,:,seg) = time_segment(source_image,samp_times, ...
-							seg,num_segments);  
+  [segment_images(:,:,:,seg),kspace_windows(:,:,:,seg)] = ...
+	time_segment(source_image,samp_times, seg,num_segments);  
 end;
 
 
 % ==== D) Phase Correct Segments
-phase_est = 0*segment_images;	% Allocate to store phase accroal
+phase_est = 0*segment_images;		% Allocate to store phase accroal
+sign_corr_segments = 0*segment_images;	% Allocate to store this point
 corr_segments = segment_images;	% Corrected images, start
 
 % -- Define filter for spatial smoothing
@@ -60,12 +62,14 @@ for curr_segment = 1:num_segments
   if (curr_segment > 1)
     sign_flip = find(abs(seg_delta_phase)>pi/2);	% Pix to flip
     seg_image(sign_flip) =-seg_image(sign_flip);	% Flip sign
+    sign_corr_segments(:,:,:,curr_segment)=seg_image;	% Store
 
     % -- LPF sign-corrected component to extract delta phase
     smooth_delta_phase = imfilter(seg_image,smooth_kernel,'replicate');
     phase_est(:,:,:,curr_segment)=angle(smooth_delta_phase);
   else
     phase_est(:,:,:,curr_segment)=seg_delta_phase;
+    sign_corr_segments(:,:,:,curr_segment)=segment_images(:,:,:,1);	% Store
   end;
 
   % -- Display raw and smoothed-corrected phases
