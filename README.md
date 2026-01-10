@@ -3,7 +3,9 @@
 The basic idea is that if MRI data is sampled over time (since RF pulse), 
 such that (1) t(k) and t(-k) are equal and (2) the surrounding samples have
 similar time, then the phase over time can be estimated using time segmentation
-of the data.
+of the data.  The general process is shown below:
+
+![time-segmented phase correction](https://github.com/mribri999/timesegmentedphase/blob/main/overview.png?raw=true)
 
 Here is an overview of steps to use this code, that is in the script _example1.m._  First note that you can get data files (~150MB) from a [shared google folder here](https://drive.google.com/drive/folders/1iPdpgdrvwR8-4gm9VGjoHD1XT3VljDLf?usp=sharing).
 
