@@ -6,10 +6,6 @@
 %	This example FOLLOWS example1.m and example2.m, 
 %	and reproduces a figure	that shows the process of 
 %	the phase extraction and correction.
-%
-%	Use example3a if you would like to use "tight_subplot" which
-%	you can download from the internet elsewhere.
-
 
 roi_x = 65:256;	% X range to show
 roi_y = 33:224;	% Y range to show
@@ -23,23 +19,23 @@ segment_show = 1:num_segments-1;	% Show segments...
 num_columns = 10;	% For figure
 imax = max(abs(source_image(:)))/2;
 
-clf;                % Clear figure
+subaxes = tight_subplot(length(segment_show),num_columns, ...
+                                [.02 .01],[.01 .04],[.01 .01]);
 
 for row = 1:length(segment_show)
-  
-  subplot(length(segment_show),num_columns,num_columns*(row-1)+1);
+  axes(subaxes(num_columns*(row-1)+1));
   dispim(squeeze(kspace_windows(:,:,midslice,segment_show(row))));
   ptitle = sprintf('W_%d(k)',segment_show(row));
   title(ptitle); axis off;
 
   % Segment Magnitude
-  subplot(length(segment_show),num_columns,num_columns*(row-1)+2);
+  axes(subaxes(num_columns*(row-1)+2));
   dispim(squeeze(segment_images(roi_x,roi_y,slice,segment_show(row))),0,imax);
   ptitle = sprintf('Magnitude m_%d(r)',segment_show(row));
   title(ptitle); axis off;
 
   % Incremental Segment Phase
-  subplot(length(segment_show),num_columns,num_columns*(row-1)+3);
+  axes(subaxes(num_columns*(row-1)+3));
   if (segment_show(row)==1)
     dispangle(exp(i*squeeze(phase_est(roi_x,roi_y,slice,1))));
   else
@@ -50,46 +46,48 @@ for row = 1:length(segment_show)
   title(ptitle); axis off;
 
   % Sign-Corrected, Low-Pas Filtered Incremental Phase
-  subplot(length(segment_show),num_columns,num_columns*(row-1)+4);
+  axes(subaxes(num_columns*(row-1)+4));
   dispangle(squeeze(sign_corr_segments(roi_x,roi_y,slice,segment_show(row))));
   ptitle = sprintf('Sign-Corrected Phase');
   title(ptitle); axis off;
 
   % Incremental Phase
-  subplot(length(segment_show),num_columns,num_columns*(row-1)+5);
+  axes(subaxes(num_columns*(row-1)+5));
   dispangle(squeeze(exp(i*phase_est(roi_x,roi_y,slice,segment_show(row)))));
-  ptitle = sprintf('Est. Inc Phase');
+  ptitle = sprintf('Est. Inc Phase',segment_show(row));
   title(ptitle); axis off;
 
   % Corrected Phase
-  subplot(length(segment_show),num_columns,num_columns*(row-1)+6);
+  axes(subaxes(num_columns*(row-1)+6));
   dispangle(squeeze(corr_segments(roi_x,roi_y,slice,segment_show(row))));
   ptitle = sprintf('Corrected Phase');
   title(ptitle); axis off;
 
   % Cumulative Image (corrected)
-  subplot(length(segment_show),num_columns,num_columns*(row-1)+7);
+  axes(subaxes(num_columns*(row-1)+7));
   dispim(squeeze(sum(segment_images(roi_x,roi_y,slice,1:segment_show(row)),4)));
   ptitle = sprintf('Reference Cumulative');
   title(ptitle); axis off;
 
   % Cumulative Image (reference)
-  subplot(length(segment_show),num_columns,num_columns*(row-1)+8);
+  axes(subaxes(num_columns*(row-1)+8));
   dispim(squeeze(sum(corr_segments(roi_x,roi_y,slice,1:segment_show(row)),4)));
   ptitle = sprintf('Corrected Cumulative');
   title(ptitle); axis off;
 
   % Cumulative Image (map 1)
-  subplot(length(segment_show),num_columns,num_columns*(row-1)+9);
+  axes(subaxes(num_columns*(row-1)+9));
   dispim(squeeze(sum(image_corr_map1(roi_x,roi_y,slice,1:segment_show(row)),4)));
   ptitle = sprintf('Corrected Map 1');
   title(ptitle); axis off;
 
   % Cumulative Image (map 2)
-  subplot(length(segment_show),num_columns,num_columns*(row-1)+10);
+  axes(subaxes(num_columns*(row-1)+10));
   dispim(squeeze(sum(image_corr_map2(roi_x,roi_y,slice,1:segment_show(row)),4)));
   ptitle = sprintf('Corrected Map 2');
   title(ptitle); axis off;
+
+
 
 end;
 
