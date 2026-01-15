@@ -7,7 +7,10 @@ of the data.  The general process is shown below:
 
 ![time-segmented phase correction](https://github.com/mribri999/timesegmentedphase/blob/main/overview.png?raw=true)
 
-Here is an overview of steps to use this code, that is in the script _example1.m._  First note that you can get data files (~150MB) from a [shared google folder here](https://drive.google.com/drive/folders/1iPdpgdrvwR8-4gm9VGjoHD1XT3VljDLf?usp=sharing).
+If you prefer to jump right in and try this, use _example0.m_ which is a compact version
+that approximates time-segmentation of 3D radial/cones data with concentric spherical shells.
+
+Below is a more complete overview of steps to use this code, that is in the script _example1.m._  First note that you can get data files (~150MB) from a [shared google folder here](https://drive.google.com/drive/folders/1iPdpgdrvwR8-4gm9VGjoHD1XT3VljDLf?usp=sharing).
 
 ## A) Load Sampling Trajectory Time (Gridded)
 This is an example 3D cones sampling trajectory, with kx,ky,kz locations, normalized
