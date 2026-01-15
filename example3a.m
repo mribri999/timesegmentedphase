@@ -1,11 +1,15 @@
 %
-%	Time Segmented Phase Extraction:  Example 3
+%	Time Segmented Phase Extraction:  Example 3a
 %
 %	Please see GitHub mribri999/timesegmentedphase.
 %
 %	This example FOLLOWS example1.m and example2.m, 
 %	and reproduces a figure	that shows the process of 
 %	the phase extraction and correction.
+%
+%	This uses code "tight_subplot" which makes nicer
+%	figures than example3.m, but you have to get that separately
+%	from the internet. 
 
 roi_x = 65:256;	% X range to show
 roi_y = 33:224;	% Y range to show
