@@ -10,5 +10,5 @@
 
 load sampledata;				% Patch of a full image.
 [corr_image] = ring_b0_corr(source_image,8);
-disp3d(cat(1,source_image,corr_image);
+disp3d(cat(1,source_image,corr_image),3,40);	% Display, with Window/Level
 
