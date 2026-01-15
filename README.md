@@ -8,7 +8,8 @@ of the data.  The general process is shown below:
 ![time-segmented phase correction](https://github.com/mribri999/timesegmentedphase/blob/main/overview.png?raw=true)
 
 If you prefer to jump right in and try this, use _example0.m_ which is a compact version
-that approximates time-segmentation of 3D radial/cones data with concentric spherical shells.
+that approximates time-segmentation of 3D radial/cones data with concentric spherical shells 
+in 3D k-space.  No k-space timing information is needed, only an uncorrected 3D image.
 
 Below is a more complete overview of steps to use this code, that is in the script _example1.m._  First note that you can get data files (~150MB) from a [shared google folder here](https://drive.google.com/drive/folders/1iPdpgdrvwR8-4gm9VGjoHD1XT3VljDLf?usp=sharing).
 
