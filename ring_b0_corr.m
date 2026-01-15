@@ -1,9 +1,11 @@
-% function corr_image=ring_b0_corr(source_image,num_rings)
+% function corr_image = ring_b0_corr(source_image,num_rings)
 %
 %
 %	Function does a mostly memory efficient approach to hierarchical
 %	deblurring using ring filters (actually spherical shells in 3D), 
-%	and removing residual phase to autofocus the image.
+%	and removing residual phase to autofocus the image.  The ring
+%   filters are usually a good approximation for time-segmentation of 
+%   acquired data.
 %
 %	INPUT:
 %		source_image = 3D image (complex x,y,z) to correct.
@@ -13,7 +15,7 @@
 %
 %	B. Hargreaves - Nov 2025
 %
-function [corr_image,ex_field_map] = ring_b0_corr(source_image,num_rings)
+function [corr_image] = ring_b0_corr(source_image,num_rings)
 
 % -- Setup
 ring_overlap = 1;	% How much rings overlap - with Hamming, 1=50%
@@ -41,7 +43,7 @@ k_radius = 0.5*k_radius/(max(ky(:)/ring_aspect(2)));  % kmax<0.5 (cones/spiral)
 % -- Define Ring Boundaries, including overlap
 ring_increment = 0.5/(num_rings-1);             % center-to-center increment
 ring_width = ring_increment*ring_overlap;       % edge-to-edge
-ring_start = ring_increment*[0:num_rings-1]-(ring_width);	% Inner kr's
+ring_start = (ring_increment*[0:num_rings-1])-(ring_width);	% Inner kr's
 ring_end = ring_start + 2*ring_width;				% Outer kr's
 
 
@@ -51,13 +53,11 @@ kernel_sigma = kernel_size/2;           % Standard deviation of the Gaussian
 smooth_kernel = fspecial3('gaussian', kernel_size, kernel_sigma);
 
 
-
-% -- Filter each ring, then unwrap phase (main loop!)
+% -- Filter each ring (time-segment) and extract phase 
 for ring=1:num_rings
-  message = sprintf('Correcting ring %d of %d',ring,num_rings);
-  disp(message);
-
-  % Step 0 -- Ring filter the image
+  fprintf('Correcting ring %d of %d\n',ring,num_rings);
+  
+  % Step 0 -- Ring filter the image (Time Segmentation)
 
   % -- Find non-zero points for mask/filter H(k)
   ring_mask =find(k_radius(:)>=ring_start(ring) & k_radius(:)<ring_end(ring));
@@ -71,23 +71,26 @@ for ring=1:num_rings
   masked_kspace = ring_filter .* source_kspace;	  
   ring_image = ft3(masked_kspace);
 
-  % Step 1 -- Remove DC phase
+  % -- Phase Extraction and Unwrapping
   if (ring==1)
+    % Step 1 -- Remove DC phase
     corr_phase = exp(-i*angle(ring_image));	% Accumulate phase
     corr_image = ring_image.*corr_phase;	% Corrected image
   else
     image_copy = ring_image.*corr_phase;	% Remove prior rings' phase
 
+    % Step 2a - Sign Correction
     % Assume sign changes are due to image harmonic, NOT off-resonance
     sign_change = find(abs(angle(image_copy))>pi/2);	% Points w/ sign change
     image_copy(sign_change)=-image_copy(sign_change);	% Flip signs
+
+    % -- Step 2b - Low-pass Filter
     image_copy = imfilter(image_copy,smooth_kernel,'replicate');	% LPF
     % Note this filters the magnitude image, not just unit-vector phase
-	
+
+    % -- Steps 2c and 3 - Store phase, Remove from component and accumulate	
     % -- Update accumulated phase for next ring.
     corr_phase = corr_phase.* exp(-i*angle(image_copy));   
-
-    % -- remove phase and add this ring image to corrected image
     corr_image = corr_image + ring_image.*corr_phase;	   % Phase corr
 
   end;
